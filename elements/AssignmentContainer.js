@@ -1,22 +1,25 @@
 import React from 'react'
-import {View} from 'react-native'
-import {Text, Button} from 'react-native-elements'
+import {ScrollView, View} from 'react-native'
+import {Text, Button, Icon} from 'react-native-elements'
 import {FormLabel, FormInput, FormValidationMessage} from 'react-native-elements'
 import AssignmentServices from "../services/AssignmentServices";
+import WidgetList from "../components/WidgetList";
 
 
 class AssignmentContainer extends React.Component {
-    static navigationOptions = { title: "Assignment Editor"};
+    static navigationOptions = {title: "Assignment Editor"};
+
     constructor(props) {
         super(props);
         this.assignmentService = AssignmentServices.instance;
         this.state = {
             lessonId: this.props.lessonId,
             assignment: {
-            title: '',
-            description: '',
-            points: 0,
-            widgetType: 'assignment'}
+                title: '',
+                description: '',
+                points: 0,
+                widgetType: 'assignment'
+            }
         }
     }
 
@@ -26,102 +29,126 @@ class AssignmentContainer extends React.Component {
         })
     }
 
-    componentWillReceiveProps(newProps){
+    componentWillReceiveProps(newProps) {
         this.setState({
             lessonId: newProps.lessonId
         })
     }
 
     updateTitle(newTitle) {
-        this.setState({assignment: {title: newTitle,
+        this.setState({
+            assignment: {
+                title: newTitle,
                 description: this.state.assignment.description,
                 points: this.state.assignment.points,
-                widgetType:this.state.assignment.widgetType}});
+                widgetType: this.state.assignment.widgetType
+            }
+        });
     }
 
     updateDescription(newDescription) {
-        this.setState({assignment: {title: this.state.assignment.title,
+        this.setState({
+            assignment: {
+                title: this.state.assignment.title,
                 description: newDescription,
                 points: this.state.assignment.points,
-                widgetType:this.state.assignment.widgetType}});
+                widgetType: this.state.assignment.widgetType
+            }
+        });
     }
 
     updatePoints(newPoints) {
-        this.setState({assignment: {title: this.state.assignment.title,
+        this.setState({
+            assignment: {
+                title: this.state.assignment.title,
                 description: this.state.assignment.description,
                 points: newPoints,
-                widgetType:this.state.assignment.widgetType}});
+                widgetType: this.state.assignment.widgetType
+            }
+        });
     }
 
     updateForm(newState) {
         this.setState(newState)
     }
 
-    // createAssignment(){
-    //     this.assignmentService
-    //         .createAssignment(this.state.lessonId, {title: this.state.title,
-    //             description: this.state.description,
-    //             points: this.state.points});
-    // }
-
-    createAssignment(){
+    createAssignment() {
         this.assignmentService
-            .createAssignment(this.state.lessonId, this.state.assignment);
+            .createAssignment(this.state.lessonId, this.state.assignment)
+            .then(() => {
+                    this.props.navigation
+                        .navigate("WidgetList", {lessonId: this.state.lessonId})
+                }
+            );
     }
 
     render() {
-        return(
-            <View>
+        return (
+            <ScrollView>
                 <FormLabel>Title</FormLabel>
-                <FormInput onChangeText={
-                    text => this.updateTitle(text)
-                }/>
-                <FormValidationMessage>
-                    Title is required
-                </FormValidationMessage>
+                <FormInput
+                    placeholder={'Enter Assignment title'}
+                    onChangeText={
+                        text => this.updateTitle(text)
+                    }/>
 
                 <FormLabel>Description</FormLabel>
-                <FormInput onChangeText={
-                    text => this.updateDescription(text)
-                }/>
-                <FormValidationMessage>
-                    Description is required
-                </FormValidationMessage>
+                <FormInput
+                    placeholder={'Enter Assignment description'}
+                    onChangeText={
+                        text => this.updateDescription(text)
+                    }/>
 
                 <FormLabel>Points</FormLabel>
-                <FormInput onChangeText={
-                    points => this.updatePoints(points)
-                }/>
-                <FormValidationMessage>
-                    Points is required
-                </FormValidationMessage>
+                <FormInput
+                    placeholder={'Enter points for this assignment'}
+                    onChangeText={
+                        points => this.updatePoints(points)
+                    }/>
+                <View style={{padding: 15}}>
+                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <Icon
+                                reverse
+                                color='green'
+                                name='save'
+                                type='font-awesome'
+                                onPress={() => {
+                                    this.createAssignment()
+                                }}
+                            />
+                        </View>
 
-                <Button	backgroundColor="green"
-                           color="white"
-                           title="Save"
-                           onPress={() => {this.createAssignment()}}/>
-                <Button	backgroundColor="red"
-                           color="white"
-                           title="Cancel"
-                           onPress={() => {this.updateForm({title:'',description:'',points:'',widgetType:'assignment'})}}/>
+                        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <Icon
+                                reverse
+                                color='red'
+                                name='times'
+                                type='font-awesome'
+                                onPress={() =>
+                                    this.props.navigation
+                                        .navigate("WidgetList", {lessonId: this.state.lessonId})
+                                }
+                            />
+                        </View>
+                    </View>
+                </View>
 
-                <Text h3>Preview</Text>
+                <View style={{justifyContent: "center", alignItems: "center"}}>
+                    <Text h3>Preview</Text>
+                </View>
                 <Text h2>{this.state.title}</Text>
-                <Text>{this.state.description}</Text>
+                <Text h1>{this.state.description}</Text>
                 <Text h4>Essay Answer</Text>
-                <FormInput/>
+                <FormInput
+                placeholder={'This is the essay'}/>
                 <Text h4>Upload a file</Text>
-                <FormInput/>
+                <Button style={{color:'black', backgroundColor:"grey"}}>Upload file</Button>
                 <Text h4>Submit a Link</Text>
-                <FormInput/>
-                <Button	backgroundColor="green"
-                           color="white"
-                           title="Submit"/>
-                <Button	backgroundColor="red"
-                           color="white"
-                           title="Cancel"/>
+                <FormInput
+                    placeholder={'Enter link here'}/>
 
-            </View>
+            </ScrollView>
         )
     }
 }

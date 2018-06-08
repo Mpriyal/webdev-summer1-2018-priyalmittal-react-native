@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {ScrollView, View} from 'react-native'
-import {Button, ListItem} from 'react-native-elements'
+import {Button, ListItem, Icon} from 'react-native-elements'
 import AssignmentContainer from "../elements/AssignmentContainer";
 
 class WidgetList extends Component {
@@ -41,16 +41,23 @@ class WidgetList extends Component {
     render() {
         return (
             <ScrollView style={{padding: 15}}>
-                <Button backgroundColor="green"
-                        color="white"
-                        onPress={() => this.props.navigation.navigate('WidgetEditor', {lessonId: this.state.lessonId})}
-                        title="Add Widget"/>
+                <View style={{justifyContent:"center", alignItems:"center"}}>
+                <Icon
+                    reverse
+                    color='green'
+                    name='plus'
+                    type='font-awesome'
+                    onPress={() =>
+                        this.props.navigation.navigate('WidgetEditor', {lessonId: this.state.lessonId})}
+                />
+                </View>
+
                 {this.state.widgets.map(
                     (widget, index) => (
                         <ListItem
                             onPress={() => {
                                 if (widget.widgetType === "exam") {
-                                    this.props.navigation.navigate("QuestionList", {examId: widget.id, lessonId: this.state.lessonId})
+                                    this.props.navigation.navigate("ExamQuestionList", {examId: widget.id, lessonId: this.state.lessonId})
                                 }
                                 else {
                                     this.props.navigation.navigate("AssignmentEditor", {assignmentId: widget.id, widget: widget,lessonId: this.state.lessonId })

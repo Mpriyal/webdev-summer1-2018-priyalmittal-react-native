@@ -1,8 +1,9 @@
 import React from 'react'
-import {View} from 'react-native'
-import {Text, Button} from 'react-native-elements'
+import {ScrollView, View} from 'react-native'
+import {Text, Button, Icon} from 'react-native-elements'
 import {FormLabel, FormInput, FormValidationMessage} from 'react-native-elements'
 import ExamServices from "../services/ExamServices";
+import WidgetList from "../components/WidgetList";
 // import QuestionTypePicker from "./QuestionTypePicker";
 
 
@@ -51,52 +52,63 @@ class ExamContainer extends React.Component {
 
     createExam(){
         this.examService
-            .createExam(this.state.lessonId, this.state.exam);
+            .createExam(this.state.lessonId, this.state.exam)
+            .then(() => {
+                this.props.navigation
+                    .navigate("WidgetList", {lessonId: this.state.lessonId})
+            });
     }
 
     render() {
         return(
-            <View>
+            <ScrollView>
                 <FormLabel>Title</FormLabel>
-                <FormInput onChangeText={
+                <FormInput
+                    placeholder={'Enter Exam title'}
+                    onChangeText=
+                        {
                     text => this.updateTitle(text)
                 }/>
-                <FormValidationMessage>
-                    Title is required
-                </FormValidationMessage>
 
                 <FormLabel>Description</FormLabel>
-                <FormInput onChangeText={
+                <FormInput
+                    placeholder={'Enter Exam description'}
+                    onChangeText={
                     text => this.updateDescription(text)
                 }/>
-                <FormValidationMessage>
-                    Description is required
-                </FormValidationMessage>
+            <View style={{padding: 15}}>
+                <View style={{flex:1,flexDirection: 'row', alignItems:'center'}}>
+                <View style={{justifyContent:'center', alignItems:'center'}}>
+                    <Icon
+                        reverse
+                        color='green'
+                        name='save'
+                        type='font-awesome'
+                        onPress={() =>
+                        {this.createExam()}}
+                    />
+                </View>
 
-                <Button	backgroundColor="green"
-                           color="white"
-                           title="Save"
-                           onPress={() => {this.createExam()}}/>
-
-                <Button	backgroundColor="red"
-                           color="white"
-                           title="Cancel"
-                           onPress={() => {this.setState({exam: {title:'',description:'',questions:[],
-                               widgetType:'exam'}})}}/>
-
-                <Text h3>Preview</Text>
-                {<Text h2>{this.state.exam.title}</Text>}
-                {<Text>{this.state.exam.description}</Text>}
-                <FormInput/>
-                <Button	backgroundColor="green"
-                           color="white"
-                           title="Save"
-                />
-                <Button	backgroundColor="red"
-                           color="white"
-                           title="Cancel"
-                />
+                <View style={{justifyContent:'center', alignItems:'center'}}>
+                    <Icon
+                        reverse
+                        color='red'
+                        name='times'
+                        type='font-awesome'
+                        onPress={() =>
+                            this.props.navigation
+                                .navigate("WidgetList", {lessonId: this.state.lessonId})
+                        }
+                    />
+                </View>
+                </View>
             </View>
+                <View style={{justifyContent:"center", alignItems:"center"}}>
+                <Text h1>Preview:</Text>
+                </View>
+                <Text h2>{this.state.exam.title}</Text>
+                <Text h3>{this.state.exam.description}</Text>
+            </ScrollView>
         )
     }
 }

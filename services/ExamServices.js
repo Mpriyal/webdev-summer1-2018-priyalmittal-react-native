@@ -1,8 +1,8 @@
-const LESSON_EXAM_API_URL =
+const LESSON_EXAM_URL =
     'http://localhost:8080/api/lesson/LID/exam';
-const LESSON_WIDGET_API_URL =
-    'http://localhost:8080/api/lesson/LID/widget';
-const EXAM_API_URL =
+// const LESSON_WIDGET_API_URL =
+//     'http://localhost:8080/api/lesson/LID/widget';
+const EXAM_URL =
     'http://localhost:8080/api/exam';
 
 let _singleton = Symbol();
@@ -25,7 +25,7 @@ export default class ExamServices {
     // }
 
     createExam(lessonId,exam) {
-        return fetch(LESSON_EXAM_API_URL
+        return fetch(LESSON_EXAM_URL
                 .replace('LID', lessonId),
             {
                 body: JSON.stringify(exam),
@@ -34,12 +34,12 @@ export default class ExamServices {
             })
             .then(function (response)
             {
-                return response.json();
+                return response;
             })
     }
 
     deleteExam(examId) {
-        return fetch(EXAM_API_URL + '/' + examId,
+        return fetch(EXAM_URL + '/' + examId,
             {
                 method: 'DELETE'
             })
